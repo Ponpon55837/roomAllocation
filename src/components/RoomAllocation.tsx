@@ -140,6 +140,7 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }
               </div>
             </div>
           </div>
+          <hr className="hrDivider" style={{ display: room === index + 1 ? 'none' : 'default' }} />
         </div>
       ))}
     </div>

@@ -69,14 +69,10 @@ const CustomInputNumber: React.FC<CustomInputNumberProps> = ({
       </button>
       <input
         type="number"
-        name={name}
         value={inputValue}
-        min={min}
-        max={max}
-        step={step}
         onChange={handleChange}
         onBlur={handleBlur}
-        disabled={disabled}
+        {...{ name, min, max, step, disabled }}
         style={{
           color: disabled ? '#999' : '#000',
         }}

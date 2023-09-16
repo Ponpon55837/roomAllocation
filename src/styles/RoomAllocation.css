@@ -22,7 +22,7 @@
 }
 
 .roomCount {
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 
 .filterDivContainer {
@@ -40,4 +40,8 @@
   width: 50%;
   display: block;
   float: right;
+}
+
+.hrDivider {
+  border-top: 1px solid #ddd;
 }
