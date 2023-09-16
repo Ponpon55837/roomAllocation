@@ -1,0 +1,12 @@
+.container {
+  border: 1px solid #ccc;
+  background-color: #dddddd;
+  text-align: center;
+  margin: auto;
+}
+
+.dataDiv {
+  display: block;
+  text-align: center;
+  width: 100%;
+}
