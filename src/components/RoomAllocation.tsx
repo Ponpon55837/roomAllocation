@@ -88,43 +88,40 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }
         <div className="labelForCount">尚未分配人數: {guest - totalAdults - totalChildren}</div>
       </div>
       {roomAllocations.map((allocation: { adult: number; child: number }, index: number) => (
-        <table key={index}>
-          <thead>
-            <tr>
-              <th>
-                房間 {index + 1}: {allocation.adult + allocation.child} 人
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>大人</td>
-              <td rowSpan={2}>
-                <CustomInputNumber
-                  min={1}
-                  max={4}
-                  step={1}
-                  name={`adult${index}`}
-                  value={allocation.adult}
-                  onChange={(event) =>
-                    handleRoomChange(index, 'adult', parseFloat(event.target.value))
-                  }
-                  onBlur={(event) => console.log(event)}
-                  disabled={
-                    allocation.adult + allocation.child === 4 ||
-                    totalAdults + totalChildren === guest
-                  }
-                />
-              </td>
-            </tr>
+        <div key={index}>
+          <div className="roomCount">
+            房間 {index + 1}: {allocation.adult + allocation.child} 人
+          </div>
 
-            <tr>
-              <td className="greyTd">年齡 20 +</td>
-            </tr>
+          <div className="filterDivContainer">
+            <div className="filterLeftDiv">
+              <div>大人</div>
+              <div className="greyTd">年齡 20 +</div>
+            </div>
+            <div className="filterRightDiv">
+              <CustomInputNumber
+                min={1}
+                max={4}
+                step={1}
+                name={`adult${index}`}
+                value={allocation.adult}
+                onChange={(event) =>
+                  handleRoomChange(index, 'adult', parseFloat(event.target.value))
+                }
+                onBlur={(event) => console.log(event)}
+                disabled={
+                  allocation.adult + allocation.child === 4 || totalAdults + totalChildren === guest
+                }
+              />
+            </div>
+          </div>
 
-            <tr>
-              <td>小孩</td>
-              <td rowSpan={2}>
+          <div className="filterDivContainer">
+            <div className="filterLeftDiv">
+              <div>小孩</div>
+            </div>
+            <div className="filterRightDiv">
+              <div>
                 <CustomInputNumber
                   min={0}
                   max={4}
@@ -140,14 +137,10 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }
                     totalAdults + totalChildren === guest
                   }
                 />
-              </td>
-            </tr>
-
-            <tr>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
+              </div>
+            </div>
+          </div>
+        </div>
       ))}
     </div>
   )

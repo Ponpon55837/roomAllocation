@@ -1,5 +1,5 @@
 .container {
-  max-width: 20rem;
+  max-width: 25rem;
   border: 3px dashed #dddddd;
   padding: 5px;
 }
@@ -19,4 +19,25 @@
 
 .greyTd {
   color: #8b8b8b;
+}
+
+.roomCount {
+  margin-bottom: 5px;
+}
+
+.filterDivContainer {
+  width: 100%;
+  display: flex;
+}
+
+.filterLeftDiv {
+  width: 50%;
+  display: block;
+  float: left;
+}
+
+.filterRightDiv {
+  width: 50%;
+  display: block;
+  float: right;
 }
