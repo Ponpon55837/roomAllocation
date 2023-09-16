@@ -5,7 +5,7 @@ const App = () => {
   return (
     <RoomAllocation
       guest={10}
-      room={4}
+      room={3}
       onChange={(roomAllocations) => console.log(roomAllocations)}
     />
   )

@@ -1,3 +1,17 @@
+.container {
+  max-width: 20rem;
+  border: 3px dashed #dddddd;
+  padding: 5px;
+}
+
+.labelForCount {
+  margin-top: 1rem;
+  border-radius: 5px;
+  background-color: #d3f8fd;
+  padding: 0.5rem;
+  display: fit-content;
+}
+
 .headerContent {
   margin-bottom: 1rem;
 }
