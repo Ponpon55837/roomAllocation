@@ -1,12 +1,19 @@
 .container {
   border: 1px solid #ccc;
   background-color: #dddddd;
-  text-align: center;
+  /* text-align: center; */
+  display: block;
   margin: auto;
+  width: 100%;
+  overflow: hidden; /* 清除浮動 */
 }
 
-.dataDiv {
-  display: block;
-  text-align: center;
-  width: 100%;
+.leftDiv {
+  width: 50%;
+  float: left;
+}
+
+.rightDiv {
+  width: 50%;
+  float: left;
 }

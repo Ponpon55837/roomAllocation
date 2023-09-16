@@ -9,18 +9,18 @@ interface CustomInputNumberProps {
   value: number
   onChange: (event: ChangeEvent<HTMLInputElement>) => void
   onBlur: (event: FocusEvent<HTMLInputElement>) => void
-  disabled?: boolean
+  disabled: boolean
 }
 
 const CustomInputNumber: React.FC<CustomInputNumberProps> = ({
   min = 0,
   max = 999,
-  step = 0.5,
+  step = 1,
   name,
   value,
   onChange,
   onBlur,
-  disabled = false,
+  disabled,
 }) => {
   const [inputValue, setInputValue] = useState<number>(value)
 
@@ -56,11 +56,7 @@ const CustomInputNumber: React.FC<CustomInputNumberProps> = ({
 
   return (
     <div className="controlDiv">
-      <button
-        className="controlBtn"
-        onClick={handleDecrement}
-        disabled={disabled || inputValue <= min}
-      >
+      <button className="controlBtn" onClick={handleDecrement} disabled={inputValue === min}>
         -
       </button>
       <input

@@ -5,9 +5,8 @@ const index = () => {
   return (
     <div className="container">
       <RoomAllocation
-        adultGuest={2}
-        childGuest={1}
-        room={2}
+        guest={10}
+        room={4}
         onChange={(roomAllocations) => console.log(roomAllocations)}
       />
     </div>

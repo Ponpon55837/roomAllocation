@@ -1,23 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import CustomInputNumber from './CustomInputNumber'
+import '../styles/RoomAllocation.css'
 
 interface RoomAllocationProps {
-  adultGuest: number
-  childGuest: number
+  guest: number
   room: number
   onChange: (result: { adult: number; child: number }[]) => void
 }
 
-const RoomAllocation: React.FC<RoomAllocationProps> = ({
-  adultGuest,
-  childGuest,
-  room,
-  onChange,
-}) => {
+const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }) => {
   const [roomAllocations, setRoomAllocations] = useState<any>([])
-  const [totalAdults, setTotalAdults] = useState(1)
-  const [totalChildren, setTotalChildren] = useState(0)
+  const [totalAdults, setTotalAdults] = useState<number>(room) // 初始值為房間數
+  const [totalChildren, setTotalChildren] = useState<number>(0)
 
+  // 初始化房間內含有大人與小孩陣列
   const initializeRoomAllocations = () => {
     if (room === 0) return
 
@@ -27,16 +23,32 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({
     }))
 
     setRoomAllocations(initialRoomAllocations)
+    // 計算大人與小孩總人數
     calculateTotalGuests(initialRoomAllocations)
   }
 
   const handleRoomChange = (index: number, type: string, value: number) => {
     const newRoomAllocations = [...roomAllocations]
     newRoomAllocations[index][type] = value
+
+    // 確保每間房間大人加上小孩不超過4人
+    const totalGuestsInRoom = newRoomAllocations[index].adult + newRoomAllocations[index].child
+    if (totalGuestsInRoom > 4) {
+      // 如果超過4人，將值設為4並更新state
+      newRoomAllocations[index][type] =
+        type === 'adult' ? 4 - newRoomAllocations[index].child : 4 - newRoomAllocations[index].adult
+    }
+
+    // 確保每間房間至少有1位大人
+    if (newRoomAllocations[index].adult === 0) {
+      newRoomAllocations[index].adult = 1
+    }
+
     setRoomAllocations(newRoomAllocations)
     calculateTotalGuests(newRoomAllocations)
   }
 
+  // 計算大人與小孩總人數
   const calculateTotalGuests = (allocations: { adult: number; child: number }[]) => {
     let adults = 0
     let children = 0
@@ -51,13 +63,15 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({
   }
 
   const isAllocationValid = () => {
-    return totalAdults + totalChildren === adultGuest + childGuest
+    return totalAdults + totalChildren === guest
   }
 
+  // 初始化房間內含有大人與小孩陣列
   useEffect(() => {
     initializeRoomAllocations()
-  }, [adultGuest, childGuest, room])
+  }, [guest, room])
 
+  // 當房間內含有大人與小孩陣列更新時，檢查是否符合條件
   useEffect(() => {
     if (isAllocationValid()) {
       onChange(roomAllocations)
@@ -67,13 +81,15 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({
   return (
     <div>
       <div>
-        <label>總人數: </label>
+        <label>住客人數: </label>
         <span>
-          {totalAdults} 大人, {totalChildren} 小孩 (每房大人上限人數: {adultGuest}, 小孩上限人數:
-          {childGuest})
+          {guest}人/{room}房
         </span>
       </div>
 
+      <div>
+        <label>尚未分配人數: {guest - totalAdults - totalChildren}</label>
+      </div>
       {roomAllocations.map((allocation: { adult: number; child: number }, index: number) => (
         <div key={index}>
           <div>
@@ -81,12 +97,16 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({
               房間 {index + 1}: {allocation.adult + allocation.child} 人
             </span>
           </div>
-          <div>
-            <div style={{ display: 'inline-block' }}>
-              <span>大人: {allocation.adult} 人</span>
+          <div className=".container" style={{ display: 'inline-flex', width: '100%' }}>
+            <div className=".leftDiv" style={{ width: '50%', float: 'left' }}>
+              <div style={{ display: 'inline-block' }}>大人: {allocation.adult} 人</div>
+              <div style={{ display: 'inline-block' }}>小孩: {allocation.child} 人</div>
+            </div>
+
+            <div className=".rightDiv" style={{ width: '50%', float: 'right' }}>
               <CustomInputNumber
                 min={1}
-                max={adultGuest}
+                max={4}
                 step={1}
                 name={`adult${index}`}
                 value={allocation.adult}
@@ -94,15 +114,13 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({
                   handleRoomChange(index, 'adult', parseFloat(event.target.value))
                 }
                 onBlur={(event) => console.log(event)}
-                disabled={adultGuest + childGuest === room}
+                disabled={
+                  allocation.adult + allocation.child === 4 || totalAdults + totalChildren === guest
+                }
               />
-            </div>
-
-            <div style={{ display: 'inline-block' }}>
-              <span>小孩: {allocation.child} 人</span>
               <CustomInputNumber
                 min={0}
-                max={childGuest}
+                max={4}
                 step={1}
                 name={`child${index}`}
                 value={allocation.child}
@@ -110,7 +128,9 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({
                   handleRoomChange(index, 'child', parseFloat(event.target.value))
                 }
                 onBlur={(event) => console.log(event)}
-                disabled={adultGuest + childGuest === room}
+                disabled={
+                  allocation.adult + allocation.child === 4 || totalAdults + totalChildren === guest
+                }
               />
             </div>
           </div>
