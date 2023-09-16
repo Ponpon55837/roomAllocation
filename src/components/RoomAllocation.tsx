@@ -79,31 +79,26 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }
   }, [roomAllocations])
 
   return (
-    <div>
-      <div>
+    <>
+      <div className="headerContent">
         <label>住客人數: </label>
         <span>
           {guest}人/{room}房
         </span>
-      </div>
-
-      <div>
-        <label>尚未分配人數: {guest - totalAdults - totalChildren}</label>
+        <div>
+          <label>尚未分配人數: {guest - totalAdults - totalChildren}</label>
+        </div>
       </div>
       {roomAllocations.map((allocation: { adult: number; child: number }, index: number) => (
-        <div key={index}>
-          <div>
-            <span>
+        <table key={index}>
+          <tr>
+            <th>
               房間 {index + 1}: {allocation.adult + allocation.child} 人
-            </span>
-          </div>
-          <div className=".container" style={{ display: 'inline-flex', width: '100%' }}>
-            <div className=".leftDiv" style={{ width: '50%', float: 'left' }}>
-              <div style={{ display: 'inline-block' }}>大人: {allocation.adult} 人</div>
-              <div style={{ display: 'inline-block' }}>小孩: {allocation.child} 人</div>
-            </div>
-
-            <div className=".rightDiv" style={{ width: '50%', float: 'right' }}>
+            </th>
+          </tr>
+          <tr>
+            <td>大人</td>
+            <td rowSpan={2}>
               <CustomInputNumber
                 min={1}
                 max={4}
@@ -118,6 +113,16 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }
                   allocation.adult + allocation.child === 4 || totalAdults + totalChildren === guest
                 }
               />
+            </td>
+          </tr>
+
+          <tr>
+            <td className="greyTd">年齡 20 +</td>
+          </tr>
+
+          <tr>
+            <td>小孩</td>
+            <td rowSpan={2}>
               <CustomInputNumber
                 min={0}
                 max={4}
@@ -132,11 +137,15 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }
                   allocation.adult + allocation.child === 4 || totalAdults + totalChildren === guest
                 }
               />
-            </div>
-          </div>
-        </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td></td>
+          </tr>
+        </table>
       ))}
-    </div>
+    </>
   )
 }
 
