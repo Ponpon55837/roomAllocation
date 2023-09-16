@@ -61,7 +61,8 @@ const CustomInputNumber: React.FC<CustomInputNumberProps> = ({
         onClick={handleDecrement}
         disabled={inputValue === min}
         style={{
-          color: inputValue === min ? '#999' : '##6588D5',
+          color: inputValue === min ? '#DDD' : '#4FAAF2',
+          borderColor: inputValue === min ? '#DDD' : '#4FAAF2',
         }}
       >
         -
@@ -85,7 +86,8 @@ const CustomInputNumber: React.FC<CustomInputNumberProps> = ({
         onClick={handleIncrement}
         disabled={disabled || inputValue >= max}
         style={{
-          color: disabled ? '#999' : '#6588D5',
+          color: disabled ? '#DDD' : '#4FAAF2',
+          borderColor: disabled ? '#DDD' : '#4FAAF2',
         }}
       >
         +
