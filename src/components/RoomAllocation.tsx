@@ -15,10 +15,9 @@ interface RoomAllocationProps {
 
 const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }) => {
   const [roomAllocations, setRoomAllocations] = useState<RoomAllocation[]>([])
-  const [totalAdults, setTotalAdults] = useState<number>(room) // 初始值為房間數
+  const [totalAdults, setTotalAdults] = useState<number>(room)
   const [totalChildren, setTotalChildren] = useState<number>(0)
 
-  // 初始化房間內含有大人與小孩陣列
   const initializeRoomAllocations = () => {
     if (room === 0) return
 
@@ -28,7 +27,6 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }
     }))
 
     setRoomAllocations(initialRoomAllocations)
-    // 計算大人與小孩總人數
     calculateTotalGuests(initialRoomAllocations)
   }
 
@@ -36,36 +34,27 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }
     const newRoomAllocations = [...roomAllocations]
     newRoomAllocations[index][type] = value
 
-    const inputSelector = document.querySelector(`input[name=${type}${index}]`) as HTMLInputElement
-
-    // 確保每間房間大人加上小孩不超過4人
     const totalGuestsInRoom = newRoomAllocations[index].adult + newRoomAllocations[index].child
-    if (totalGuestsInRoom > 4) {
-      alert('每間房間最多4人')
-      // 如果超過4人，將值設為4並更新state
-      newRoomAllocations[index][type] =
-        type === 'adult' ? 4 - newRoomAllocations[index].child : 4 - newRoomAllocations[index].adult
+    const isOverCapacity = totalGuestsInRoom > 4
+    const isAdultZero = newRoomAllocations[index].adult === 0
 
-      // 如果超過4人，將值設為4並更新input
-      inputSelector.value =
-        type === 'adult'
-          ? String(4 - newRoomAllocations[index].child)
-          : String(4 - newRoomAllocations[index].adult)
-    }
+    if (isOverCapacity || isAdultZero) {
+      if (isOverCapacity) {
+        newRoomAllocations[index][type] =
+          type === 'adult'
+            ? 4 - newRoomAllocations[index].child
+            : 4 - newRoomAllocations[index].adult
+      }
 
-    // 確保每間房間至少有1位大人
-    if (newRoomAllocations[index].adult === 0) {
-      alert('每間房間至少1位大人')
-      newRoomAllocations[index].adult = 1
-      // 如果大人為0，將值設為1並更新input
-      inputSelector.value = '1'
+      if (isAdultZero) {
+        newRoomAllocations[index].adult = 1
+      }
     }
 
     setRoomAllocations(newRoomAllocations)
     calculateTotalGuests(newRoomAllocations)
   }
 
-  // 計算大人與小孩總人數
   const calculateTotalGuests = (allocations: { adult: number; child: number }[]) => {
     let adults = 0
     let children = 0
@@ -79,18 +68,12 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }
     setTotalChildren(children)
   }
 
-  const isAllocationValid = () => {
-    return totalAdults + totalChildren === guest
-  }
-
-  // 初始化房間內含有大人與小孩陣列
   useEffect(() => {
     initializeRoomAllocations()
   }, [guest, room])
 
-  // 當房間內含有大人與小孩陣列更新時，檢查是否符合條件
   useEffect(() => {
-    if (isAllocationValid()) {
+    if (totalAdults + totalChildren === guest) {
       onChange(roomAllocations)
     }
   }, [roomAllocations])
@@ -127,7 +110,7 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }
                 }
                 onBlur={(event) => {
                   handleRoomChange(index, 'adult', parseFloat(event.target.value))
-                  // 在 onBlur 中確認 guest 人數不超過 room 數量
+                  // 每間房間至少一位大人
                   if (guest <= room) {
                     event.target.value = allocation.child.toFixed(1)
                   }
@@ -156,7 +139,7 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }
                   }
                   onBlur={(event) => {
                     handleRoomChange(index, 'child', parseFloat(event.target.value))
-                    // 在 onBlur 中確認 guest 人數不超過 room 數量
+                    // 每間房間至少一位大人
                     if (guest <= room) {
                       event.target.value = allocation.child.toFixed(1)
                     }
