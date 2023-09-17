@@ -8,9 +8,9 @@ interface RoomAllocation {
 }
 
 interface RoomAllocationProps {
-  guest: number
-  room: number
-  onChange: (result: { adult: number; child: number }[]) => void
+  guest: number // 住客人數
+  room: number // 房間數量
+  onChange: (result: { adult: number; child: number }[]) => void // 當分配結果變化時呼叫的函數
 }
 
 const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }) => {
@@ -18,9 +18,11 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }
   const [totalAdults, setTotalAdults] = useState<number>(room)
   const [totalChildren, setTotalChildren] = useState<number>(0)
 
+  // 初始化房間分配
   const initializeRoomAllocations = () => {
     if (room === 0) return
 
+    // 初始每個房間的分配，每個房間有一位大人、零位小孩
     const initialRoomAllocations = Array.from({ length: room }, () => ({
       adult: 1,
       child: 0,
@@ -30,31 +32,28 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }
     calculateTotalGuests(initialRoomAllocations)
   }
 
+  // 處理房間分配變化
   const handleRoomChange = (index: number, type: keyof RoomAllocation, value: number) => {
     const newRoomAllocations = [...roomAllocations]
     newRoomAllocations[index][type] = value
 
-    const totalGuestsInRoom = newRoomAllocations[index].adult + newRoomAllocations[index].child
-    const isOverCapacity = totalGuestsInRoom > 4
-    const isAdultZero = newRoomAllocations[index].adult === 0
+    // 計算所有房間的總分配人數
+    let totalAllocatedGuests = 0
+    newRoomAllocations.forEach((allocation) => {
+      totalAllocatedGuests += allocation.adult + allocation.child
+    })
 
-    if (isOverCapacity || isAdultZero) {
-      if (isOverCapacity) {
-        newRoomAllocations[index][type] =
-          type === 'adult'
-            ? 4 - newRoomAllocations[index].child
-            : 4 - newRoomAllocations[index].adult
-      }
+    // 計算剩餘可分配人數
+    const remainingGuests = guest - totalAllocatedGuests
 
-      if (isAdultZero) {
-        newRoomAllocations[index].adult = 1
-      }
+    // 確保分配不超過 guest 人數
+    if (remainingGuests >= 0) {
+      setRoomAllocations(newRoomAllocations)
+      calculateTotalGuests(newRoomAllocations)
     }
-
-    setRoomAllocations(newRoomAllocations)
-    calculateTotalGuests(newRoomAllocations)
   }
 
+  // 計算所有房間的總分配人數
   const calculateTotalGuests = (allocations: { adult: number; child: number }[]) => {
     let adults = 0
     let children = 0
@@ -72,8 +71,10 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }
     initializeRoomAllocations()
   }, [guest, room])
 
+  // 當分配結果變化時觸發 onChange 函數
   useEffect(() => {
-    if (totalAdults + totalChildren === guest) {
+    // 確保分配總人數不超過 guest 人數
+    if (totalAdults + totalChildren <= guest) {
       onChange(roomAllocations)
     }
   }, [roomAllocations])

@@ -29,7 +29,17 @@ const CustomInputNumber: React.FC<CustomInputNumberProps> = ({
   const [inputValue, setInputValue] = useState<number>(value)
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const newValue = parseFloat(event.target.value)
+    let newValue = parseFloat(event.target.value)
+
+    // 檢查新輸入值是否在範圍內
+    if (isNaN(newValue)) {
+      newValue = min // 如果輸入不是有效數字，將其設為最小值
+    } else if (newValue < min) {
+      newValue = min // 如果輸入低於最小值，將其設為最小值
+    } else if (newValue > max) {
+      newValue = max // 如果輸入超過最大值，將其設為最大值
+    }
+
     setInputValue(newValue)
     onChange(event)
   }
