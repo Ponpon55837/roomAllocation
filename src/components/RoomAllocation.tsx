@@ -34,6 +34,7 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }
     // 確保每間房間大人加上小孩不超過4人
     const totalGuestsInRoom = newRoomAllocations[index].adult + newRoomAllocations[index].child
     if (totalGuestsInRoom > 4) {
+      alert('每間房間最多4人')
       // 如果超過4人，將值設為4並更新state
       newRoomAllocations[index][type] =
         type === 'adult' ? 4 - newRoomAllocations[index].child : 4 - newRoomAllocations[index].adult
@@ -46,6 +47,21 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }
 
     setRoomAllocations(newRoomAllocations)
     calculateTotalGuests(newRoomAllocations)
+  }
+
+  const handleBlur = (index: number, type: string, event: React.FocusEvent<HTMLInputElement>) => {
+    // 在 onBlur 事件中驗證大人和小孩的總和是否超過4
+    const inputValue = parseFloat(event.target.value)
+    const totalAdults = type === 'adult' ? inputValue : roomAllocations[index].adult
+    const totalChildren = type === 'child' ? inputValue : roomAllocations[index].child
+
+    if (totalAdults + totalChildren > 4) {
+      alert('每間房間最多4人')
+      // 如果總和超過4，調整輸入的值
+      const adjustedValue =
+        type === 'adult' ? 4 - roomAllocations[index].child : 4 - roomAllocations[index].adult
+      event.target.value = adjustedValue.toFixed(1)
+    }
   }
 
   // 計算大人與小孩總人數
@@ -108,7 +124,7 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }
                 onChange={(event) =>
                   handleRoomChange(index, 'adult', parseFloat(event.target.value))
                 }
-                onBlur={(event) => console.log(event)}
+                onBlur={(event) => handleBlur(index, 'adult', event)}
                 disabled={
                   allocation.adult + allocation.child === 4 || totalAdults + totalChildren === guest
                 }
@@ -131,7 +147,7 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }
                   onChange={(event) =>
                     handleRoomChange(index, 'child', parseFloat(event.target.value))
                   }
-                  onBlur={(event) => console.log(event)}
+                  onBlur={(event) => handleBlur(index, 'child', event)}
                   disabled={
                     allocation.adult + allocation.child === 4 ||
                     totalAdults + totalChildren === guest
