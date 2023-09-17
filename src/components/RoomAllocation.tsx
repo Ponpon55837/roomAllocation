@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react'
 import CustomInputNumber from './CustomInputNumber'
 import '../styles/RoomAllocation.css'
 
+interface RoomAllocation {
+  adult: number
+  child: number
+}
+
 interface RoomAllocationProps {
   guest: number
   room: number
@@ -9,7 +14,7 @@ interface RoomAllocationProps {
 }
 
 const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }) => {
-  const [roomAllocations, setRoomAllocations] = useState<any>([])
+  const [roomAllocations, setRoomAllocations] = useState<RoomAllocation[]>([])
   const [totalAdults, setTotalAdults] = useState<number>(room) // 初始值為房間數
   const [totalChildren, setTotalChildren] = useState<number>(0)
 
@@ -27,7 +32,7 @@ const RoomAllocation: React.FC<RoomAllocationProps> = ({ guest, room, onChange }
     calculateTotalGuests(initialRoomAllocations)
   }
 
-  const handleRoomChange = (index: number, type: string, value: number) => {
+  const handleRoomChange = (index: number, type: keyof RoomAllocation, value: number) => {
     const newRoomAllocations = [...roomAllocations]
     newRoomAllocations[index][type] = value
 
